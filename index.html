@@ -10,12 +10,18 @@
 </head>
 <body>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 <script>
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({antialias: true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+
+    // Maussteuerung zum Rotieren der Szene
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0);
+    controls.enableDamping = true;
 
     // Floor
     const floorGeometry = new THREE.PlaneGeometry(50, 50);
@@ -75,6 +81,7 @@
         lastTime = time;
         movePlayer(delta);
         checkPages();
+        controls.update();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }

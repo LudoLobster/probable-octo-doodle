@@ -11,5 +11,6 @@ Dieses Repository enthält ein einfaches Beispiel für eine Portfolio-Website mi
 1. Repository klonen oder herunterladen.
 2. Die Dateien lokal in einem Browser öffnen. Für fortgeschrittene Szenarien empfiehlt sich ein Webserver (z.B. `npx serve`).
 3. Im Browser `index.html` laden und mit den Pfeiltasten oder WASD die Figur bewegen.
+4. Die Szene kann mit gedrückter linker Maustaste rotiert werden.
 
 Dieses Beispiel ist bewusst minimal gehalten und soll den Grundaufbau zeigen. Für ein eigenes Portfolio können Modelle, Texturen und weitere Interaktionen ergänzt werden.
