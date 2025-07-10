@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3JS Portfolio</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Maussteuerung zum Rotieren der Szene
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0);
+    controls.enableDamping = true;
+
+    // Floor
+    const floorGeometry = new THREE.PlaneGeometry(50, 50);
+    const floorMaterial = new THREE.MeshBasicMaterial({color: 0x808080, side: THREE.DoubleSide});
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = Math.PI / 2;
+    scene.add(floor);
+
+    // Player
+    const playerGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const playerMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00});
+    const player = new THREE.Mesh(playerGeometry, playerMaterial);
+    player.position.y = 0.5;
+    scene.add(player);
+
+    // Pages
+    function createPageBox(color, position, url) {
+        const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+        const boxMat = new THREE.MeshBasicMaterial({color});
+        const box = new THREE.Mesh(boxGeo, boxMat);
+        box.position.copy(position);
+        box.userData.url = url;
+        scene.add(box);
+        return box;
+    }
+    const page1Box = createPageBox(0xff0000, new THREE.Vector3(5, 0.5, 0), 'pages/page1.html');
+    const page2Box = createPageBox(0x0000ff, new THREE.Vector3(-5, 0.5, 0), 'pages/page2.html');
+
+    camera.position.set(0, 5, 10);
+    camera.lookAt(0, 0, 0);
+
+    const keys = {};
+    document.addEventListener('keydown', (e) => { keys[e.key] = true; });
+    document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+    function movePlayer(delta) {
+        const speed = 5;
+        if (keys['ArrowUp'] || keys['w']) player.position.z -= speed * delta;
+        if (keys['ArrowDown'] || keys['s']) player.position.z += speed * delta;
+        if (keys['ArrowLeft'] || keys['a']) player.position.x -= speed * delta;
+        if (keys['ArrowRight'] || keys['d']) player.position.x += speed * delta;
+    }
+
+    function checkPages() {
+        const pages = [page1Box, page2Box];
+        pages.forEach(box => {
+            const distance = player.position.distanceTo(box.position);
+            if (distance < 1) {
+                window.location.href = box.userData.url;
+            }
+        });
+    }
+
+    let lastTime = 0;
+    function animate(time) {
+        const delta = (time - lastTime) / 1000;
+        lastTime = time;
+        movePlayer(delta);
+        checkPages();
+        controls.update();
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
+</body>
+</html>
